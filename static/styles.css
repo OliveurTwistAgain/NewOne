@@ -73,6 +73,12 @@ footer {
     width: 100%;
 }
 
+#map-container {
+    width: 50%;
+    height: 400px;
+    /* Ajustez selon vos besoins */
+}
+
 .results-list {
     padding: 10px;
 }

@@ -1,6 +1,6 @@
 # app/__init__.py
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -24,6 +24,11 @@ def create_app():
     def load_user(user_id):
         from app.models import User  # Importez User ici pour éviter les problèmes d'importation circulaire
         return User.query.get(int(user_id))
+
+    # # route pour fichiers css js et images dans static
+    # @app.route('/static/<path:filename>')
+    # def custom_static(filename):
+    #     return send_from_directory('static', filename)
 
     # Importez les routes après la configuration de l'application
     from .views import main

@@ -1,100 +1,53 @@
-<!-- app/templates/index.html -->
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %}Accueil{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page_title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-</head>
+{% block content %}
+<header>
+    <h1>Welcome to My Flask App!</h1>
+    <p>Explore interesting places to visit around the world.</p>
+    <img src="{{ url_for('static', filename='welcome_image.jpg') }}" alt="Welcome Image">
+</header>
 
-<body>
-    <!-- Header Section -->
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#">Accueil</a></li>
-                <li><a href="#">A propos</a></li>
-                <li><a href="#">Visiter</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- Welcome Section -->
-    <section id="welcome">
-        <div class="container">
-            <h1>Bienvenue sur NewOne !</h1>
-            <p>Explorer de nouvelles destinations et de nouveaux endroits !</p>
-            <img src="{{ url_for('static', filename='welcome_image.jpg') }}" alt="Voyager et rêver en grand">
+<section id="latest-places">
+    <h2>Latest Places to Visit</h2>
+    <div class="cards-container">
+        {% for place in latest_places %}
+        <div class="card">
+            <h3>{{ place.name }}</h3>
+            <p>{{ place.description }}</p>
         </div>
-    </section>
-
-    <!-- Latest Places Section -->
-    <section id="latest-places">
-        <div class="container">
-            <h2>Nos dernières idées</h2>
-            <div class="card-container">
-                {% for place in latest_places %}
-                <div class="card">
-                    <h3>{{ place.name }}</h3>
-                    <p>{{ place.description }}</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-
-    <!-- Search Form and Results Section -->
-    <section id="search-results">
-        <div class="container">
-            <h2>Find Places Near You</h2>
-            <form action="{{ url_for('main.search') }}" method="post">
-                <label for="location">Enter a location:</label>
-                <input type="text" id="location" name="location" required>
-                <button type="submit">Search</button>
-            </form>
-            <div class="results-container">
-                <div class="results-list">
-                    <h3>Lieux recommandés:</h3>
-                    <ul>
-                        {% for place in places %}
-                        <li>{{ place.name }} - {{ place.description }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div id="map"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer Section -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Tourne sous Flask avec un zest de Python et quelques tasses de café. Fait avec coeur...</p>
-        </div>
-    </footer>
-
-    <!-- Include Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script>
-        // Initialize the map
-        var map = L.map('map').setView([51.505, -0.09], 13); // Coordinates for center (London in this case)
-
-        // Add a tile layer to the map
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Add markers for places
-        {% for place in places %}
-        L.marker([{{ place.latitude }}, {{ place.longitude }}]).addTo(map)
-            .bindPopup('<b>{{ place.name }}</b><br>{{ place.description }}');
+        {% else %}
+        <p>No places to show.</p>
         {% endfor %}
-    </script>
-</body>
+    </div>
+</section>
 
-</html>
+<section id="search-form">
+    <h2>Find Places Near You</h2>
+    <form action="{{ url_for('main.search') }}" method="post">
+        <label for="location">Enter your location or desired destination:</label>
+        <input type="text" id="location" name="location" required>
+        <button type="submit">Search</button>
+    </form>
+    {% if places %}
+    <div class="search-results">
+        <div class="results-list">
+            <h3>Top 5 Places Near You:</h3>
+            <ul>
+                {% for place in places %}
+                <li>{{ place.name }} - {{ place.description }}</li>
+                {% else %}
+                <li>No places found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div id="map">
+            <h3>Map</h3>
+            <div id="map-container"></div>
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}
